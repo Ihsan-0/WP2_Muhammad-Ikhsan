@@ -1,29 +1,122 @@
 <!-- Begin Page Content -->
 <div class="container-fluid">
 
+    <?= $this->session->flashdata('pesan'); ?>
     <div class="row">
-        <div class="col-lg-6 justify-content-x">
+        <div class="col-lg-12">
+            <?php if (validation_errors()) { ?>
+                <div class="alert alert-danger" role="alert">
+                    <?= validation_errors(); ?>
+                </div>
+            <?php } ?>
             <?= $this->session->flashdata('pesan'); ?>
-        </div>
-    </div>
-    <div class="card mb-3" style="max-width: 540px;">
-        <div class="row no-gutters">
-            <div class="col-md-4">
-                <img src="<?= base_url('assets/img/profile/') . $user['image']; ?>" 
-                class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-tittle"><?= $user['nama']; ?></h5>
-                    <p class="card-text"><?= $user['email']; ?></p>
-                    <p class="card-text"><small class="text-muted">Jadi member sejak:
-                    <br><b><?= date('d F Y', $user['tanggal_input']); ?></b></small></p>
-                </div>
-                <div class="btn btn-info ml-3 my-3">
-                    <a href="<?= base_url('user/ubahprofil'); ?>" class="text text-white">
-                    <i class="fas fa-user-edit"></i> Ubah Profil</a>
-                </div>
-            </div>
+            <a href="" class="btn btn-primary mb-3" data-toggle="modal" data-target="#bukuBaruModal"><i class="fas fa-file-alt"></i>Buku Baru</a>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Judul</th>
+                        <th scope="col">Pengarang</th>
+                        <th scope="col">Penerbit</th>
+                        <th scope="col">Tahun Terbit</th>
+                        <th scope="col">ISBN</th>
+                        <th scope="col">Stok</th>
+                        <th scope="col">Dipinjam</th>
+                        <th scope="col">Dibooking</th>
+                        <th scope="col">Gambar</th>
+                        <th scope="col">Pilihan</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <?php
+                    $a = 1;
+                    foreach ($buku as $b) { ?>
+                        <tr>
+                            <th scope="row"><?= $a++; ?></th>
+                            <td><?= $b['judul_buku']; ?></td>
+                            <td><?= $b['pengarang']; ?></td>
+                            <td><?= $b['penerbit']; ?></td>
+                            <td><?= $b['tahun_terbit']; ?></td>
+                            <td><?= $b['isbn']; ?></td>
+                            <td><?= $b['stok']; ?></td>
+                            <td><?= $b['dipinjam']; ?></td>
+                            <td><?= $b['dibooking']; ?></td>
+                            <td>
+                                <picture>
+                                    <source srcset="" type="imge/svg+html">
+                                    <img src="<?= base_url('assets/img/upload') . $b['image'];  ?>" class="img-fluid img-thumbnail" alt="">
+                                </picture>
+                            </td>
+                            <td>
+                                <a href="<?= base_url('buku/ubahBuku') . $b['id']; ?>" onclick="return confirm(Kamu yakin akan menghapus <?= judul . '' . $b['judul_buku']; ?>)" class="badge badge-danger"><i class="fas fa-trash"></i>Hapus</a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+<!-- /.container-fluid -->
+
+</div>
+<!-- End of Main Content -->
+
+<!-- Model Tambah Buku Baru -->
+<div class="model fade" id="bukuBaruModal" tabindex="-1" role="dialog" aria-labelledby="bukuBaruModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bukuBaruModalLabel">Tambah Buku</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="<?= base_url('buku'); ?>" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="judul_buku" name="judul_buku" placeholder="Masukkan Judul Buku">
+                    </div>
+                    <div class="form-group">
+                        <select name="id_kategori" id="" class="form-control form-control-user">
+                            <option value="">Pilih Kategori</option>
+                            <?php
+                            foreach ($kategori as $k) { ?>
+                                <option value="<?= $k['id']; ?>"><?= $k['kategori']; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="pengarang" name="pengarang" placeholder="Masukkan Nama Pengarang">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="penerbit" name="penerbit" placeholder="Masukkan Nama Penerbit">
+                    </div>
+                    <div class="form-group">
+                        <select name="tahun" class="form-control form-control-user">
+                            <option value="">Pilih Tahun</option>
+                            <?php for ($i = date('Y'); $i > 1000; $i--) { ?>
+                                <option value="<?= $i; ?>"><?= $i; ?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="isbn" name="isbn" placeholder="Masukkan ISBN">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="stok" name="stok" placeholder="Masukkan Nominal Stok">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control form-control-user" id="image" name="image">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-ban"></i>Close</button>
+                        <button type="button" class="btn btn-secondary"><i class="fas fa-plus-circle"></i>Tambah</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- End of Modal Tambah Menu -->
